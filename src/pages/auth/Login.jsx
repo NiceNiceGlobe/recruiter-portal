@@ -17,28 +17,28 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await apiClient.post("/Account/login", {
-        userName: email,
+      const response = await apiClient.post("/account/login", {
+        email,
         password,
         rememberMe: true,
       });
 
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const { id, email: userEmail, roles } = response.data;
 
-      const role = response.data.user.role;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ id, email: userEmail, roles })
+      );
 
-      if (role === "Recruiter") {
-        navigate("/recruiter/dashboard");
-      } else if (role === "Admin") {
+      if (roles.includes("Recruiter")) {
+        navigate("/dashboard");
+      } else if (roles.includes("Admin")) {
         navigate("/admin/dashboard");
       } else {
         navigate("/");
       }
     } catch (err) {
-      setError(
-        err.response?.data?.errors?.[0] ||
-          "Invalid email or password."
-      );
+      setError("Invalid email or password.");
     } finally {
       setLoading(false);
     }
