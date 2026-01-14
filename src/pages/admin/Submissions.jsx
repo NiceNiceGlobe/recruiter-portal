@@ -6,23 +6,27 @@ export default function AdminSubmissions() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [submissions, setSubmissions] = useState([]);
 
-  useEffect(() => {
-    apiClient.get("/admin/submissions").then(res => {
-      const mapped = res.data.map(s => ({
-        id: s.id,
-        recruiter: s.recruiterName,
-        file: s.fileName,
-        riders: s.totalRiders,
-        status: s.status,
-        uploadDate: new Date(s.uploadedAt).toLocaleDateString(),
-        reviewer: s.status === "Pending" ? "-" : "Admin",
-        reviewDate: s.reviewedAt
-          ? new Date(s.reviewedAt).toLocaleDateString()
-          : "-"
-      }));
+  const loadSubmissions = async () => {
+    const res = await apiClient.get("/admin/submissions");
 
-      setSubmissions(mapped);
-    });
+    const mapped = res.data.map(s => ({
+      id: s.id,
+      recruiter: s.recruiterName,
+      file: s.fileName,
+      riders: s.totalRiders,
+      status: s.status,
+      uploadDate: new Date(s.uploadedAt).toLocaleDateString(),
+      reviewer: s.status === "Pending" ? "-" : "Admin",
+      reviewDate: s.reviewedAt
+        ? new Date(s.reviewedAt).toLocaleDateString()
+        : "-"
+    }));
+
+    setSubmissions(mapped);
+  };
+
+  useEffect(() => {
+    loadSubmissions();
   }, []);
 
   return (
@@ -106,6 +110,7 @@ export default function AdminSubmissions() {
         <ReviewSubmissionModal
           submission={selectedSubmission}
           onClose={() => setSelectedSubmission(null)}
+          onReviewed={loadSubmissions}
         />
       )}
     </>

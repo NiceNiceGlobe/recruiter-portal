@@ -1,7 +1,7 @@
 import { useState } from "react";
 import apiClient from "../../services/apiClient";
 
-export default function ReviewSubmissionModal({ submission, onClose }) {
+export default function ReviewSubmissionModal({ submission, onClose, onReviewed }) {
   const [status, setStatus] = useState(submission.status);
   const [feedback, setFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,6 +15,7 @@ export default function ReviewSubmissionModal({ submission, onClose }) {
     });
 
     setSubmitting(false);
+    onReviewed();
     onClose();
   };
 
