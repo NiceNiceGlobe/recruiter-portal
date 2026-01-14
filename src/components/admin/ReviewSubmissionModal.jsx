@@ -1,6 +1,28 @@
+import { useState } from "react";
+import apiClient from "../../services/apiClient";
+
 export default function ReviewSubmissionModal({ submission, onClose }) {
+  const [status, setStatus] = useState(submission.status);
+  const [feedback, setFeedback] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+
+    await apiClient.put(`/admin/submissions/${submission.id}/review`, {
+      status,
+      adminFeedback: feedback
+    });
+
+    setSubmitting(false);
+    onClose();
+  };
+
   return (
-    <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
+    <div
+      className="modal fade show d-block"
+      style={{ background: "rgba(0,0,0,0.5)" }}
+    >
       <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header bg-primary text-white">
@@ -36,7 +58,11 @@ export default function ReviewSubmissionModal({ submission, onClose }) {
 
             <div className="mb-3">
               <label className="form-label">Status</label>
-              <select className="form-select" defaultValue={submission.status}>
+              <select
+                className="form-select"
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+              >
                 <option>Pending</option>
                 <option>Approved</option>
                 <option>Rejected</option>
@@ -48,6 +74,8 @@ export default function ReviewSubmissionModal({ submission, onClose }) {
               <textarea
                 className="form-control"
                 rows={3}
+                value={feedback}
+                onChange={e => setFeedback(e.target.value)}
                 placeholder="Provide feedback to the recruiter..."
               />
             </div>
@@ -57,8 +85,12 @@ export default function ReviewSubmissionModal({ submission, onClose }) {
             <button className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="btn btn-primary">
-              Submit Review
+            <button
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              {submitting ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </div>

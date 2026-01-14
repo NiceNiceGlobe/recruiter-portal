@@ -1,13 +1,43 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import apiClient from "../../services/apiClient";
 
 export default function AddRecruiterModal({ onClose, onSubmit }) {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [location, setLocation] = useState("");
+  const [target, setTarget] = useState(100);
+  const [password, setPassword] = useState("Password123");
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "auto";
     };
   }, []);
+
+  const handleSubmit = async () => {
+    if (!fullName || !email) return;
+
+    const [firstName, ...rest] = fullName.trim().split(" ");
+    const lastName = rest.join(" ");
+
+    setSubmitting(true);
+
+    await apiClient.post("/admin/recruiters", {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      location,
+      initialPassword: password
+    });
+
+    setSubmitting(false);
+    onSubmit();
+  };
 
   return createPortal(
     <div
@@ -29,27 +59,54 @@ export default function AddRecruiterModal({ onClose, onSubmit }) {
             <form>
               <div className="mb-3">
                 <label className="form-label">Full Name *</label>
-                <input type="text" className="form-control" required />
+                <input
+                  type="text"
+                  className="form-control"
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Email *</label>
-                <input type="email" className="form-control" required />
+                <input
+                  type="email"
+                  className="form-control"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Phone Number</label>
-                <input type="tel" className="form-control" />
+                <input
+                  type="tel"
+                  className="form-control"
+                  value={phoneNumber}
+                  onChange={e => setPhoneNumber(e.target.value)}
+                />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Location</label>
-                <input type="text" className="form-control" />
+                <input
+                  type="text"
+                  className="form-control"
+                  value={location}
+                  onChange={e => setLocation(e.target.value)}
+                />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Monthly Target</label>
-                <input type="number" className="form-control" defaultValue={100} />
+                <input
+                  type="number"
+                  className="form-control"
+                  value={target}
+                  onChange={e => setTarget(Number(e.target.value))}
+                />
               </div>
 
               <div className="mb-3">
@@ -57,7 +114,8 @@ export default function AddRecruiterModal({ onClose, onSubmit }) {
                 <input
                   type="password"
                   className="form-control"
-                  defaultValue="Password123"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                 />
                 <small className="text-muted">
                   Recruiter will be asked to change password on first login
@@ -70,8 +128,12 @@ export default function AddRecruiterModal({ onClose, onSubmit }) {
             <button className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="btn btn-primary" onClick={onSubmit}>
-              Add Recruiter
+            <button
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              {submitting ? "Adding..." : "Add Recruiter"}
             </button>
           </div>
         </div>

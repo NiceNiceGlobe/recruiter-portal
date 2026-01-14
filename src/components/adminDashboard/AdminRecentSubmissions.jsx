@@ -1,30 +1,14 @@
+import { useEffect, useState } from "react";
+import apiClient from "../../services/apiClient";
+
 export default function AdminRecentSubmissions() {
-  const submissions = [
-    {
-      id: "SUB-004",
-      recruiter: "Sarah Johnson",
-      file: "joburg_riders.csv",
-      riders: 22,
-      status: "Pending",
-      date: "Dec 2, 2024",
-    },
-    {
-      id: "SUB-002",
-      recruiter: "John Recruiter",
-      file: "december_riders.xlsx",
-      riders: 18,
-      status: "Pending",
-      date: "Dec 1, 2024",
-    },
-    {
-      id: "SUB-005",
-      recruiter: "Mike Williams",
-      file: "pretoria_riders.xlsx",
-      riders: 15,
-      status: "Rejected",
-      date: "Nov 30, 2024",
-    },
-  ];
+  const [submissions, setSubmissions] = useState([]);
+
+  useEffect(() => {
+    apiClient.get("/admin/submissions").then(res => {
+      setSubmissions(res.data);
+    });
+  }, []);
 
   return (
     <div className="card">
@@ -48,20 +32,28 @@ export default function AdminRecentSubmissions() {
           <tbody>
             {submissions.slice(0, 5).map(s => (
               <tr key={s.id}>
-                <td>{s.id}</td>
-                <td>{s.recruiter}</td>
-                <td>{s.file}</td>
-                <td>{s.riders}</td>
+                <td>{s.id.slice(0, 8).toUpperCase()}</td>
+                <td>{s.recruiterCode}</td>
+                <td>{s.fileName}</td>
+                <td>{s.totalRiders}</td>
                 <td>
-                  <span
-                    className={`status-pill ${s.status.toLowerCase()}`}
-                  >
+                  <span className={`status-pill ${s.status.toLowerCase()}`}>
                     {s.status}
                   </span>
                 </td>
-                <td>{s.date}</td>
+                <td>
+                  {new Date(s.uploadedAt).toLocaleDateString()}
+                </td>
               </tr>
             ))}
+
+            {submissions.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center text-muted">
+                  No submissions found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

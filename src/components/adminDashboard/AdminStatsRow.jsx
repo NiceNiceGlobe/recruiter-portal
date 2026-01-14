@@ -1,4 +1,17 @@
+import { useEffect, useState } from "react";
+import apiClient from "../../services/apiClient";
+
 export default function AdminStatsRow() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    apiClient.get("/admin/dashboard").then(res => {
+      setStats(res.data);
+    });
+  }, []);
+
+  if (!stats) return null;
+
   return (
     <div
       style={{
@@ -7,10 +20,26 @@ export default function AdminStatsRow() {
         gap: "16px",
       }}
     >
-      <StatCard label="Total Submissions" value={5} color="primary" />
-      <StatCard label="Pending Review" value={2} color="success" />
-      <StatCard label="Total Riders" value={50} color="warning" />
-      <StatCard label="Active Recruiters" value={4} color="info" />
+      <StatCard
+        label="Total Submissions"
+        value={stats.totalSubmissions}
+        color="primary"
+      />
+      <StatCard
+        label="Pending Review"
+        value={stats.pendingReview}
+        color="success"
+      />
+      <StatCard
+        label="Total Riders"
+        value={stats.totalRiders}
+        color="warning"
+      />
+      <StatCard
+        label="Active Recruiters"
+        value={stats.totalRecruiters}
+        color="info"
+      />
     </div>
   );
 }

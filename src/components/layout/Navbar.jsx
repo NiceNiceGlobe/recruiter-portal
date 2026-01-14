@@ -13,11 +13,21 @@ export default function Navbar({ onToggleSidebar }) {
   const userRole = user?.role || "Recruiter";
 
   const loadNotifications = async () => {
+    if (!user) return;
+
     try {
-      const res = await apiClient.get("/recruiter/dashboard");
-      setNotifications(res.data.recentActivity || []);
+      if (userRole === "Recruiter") {
+        const res = await apiClient.get("/recruiter/dashboard");
+        setNotifications(res.data.recentActivity || []);
+      }
+
+      if (userRole === "Admin") {
+        const res = await apiClient.get("/admin/notifications");
+        setNotifications(res.data.recentActivity || []);
+      }
     } catch (err) {
       console.error("Failed to load notifications", err);
+      setNotifications([]);
     }
   };
 
@@ -41,7 +51,7 @@ export default function Navbar({ onToggleSidebar }) {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("focus", handleFocus);
     };
-  }, []);
+  }, [user, userRole]);
 
   const handleLogout = async () => {
     try {

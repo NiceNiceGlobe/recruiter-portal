@@ -1,11 +1,14 @@
+import { useEffect, useState } from "react";
+import apiClient from "../../services/apiClient";
+
 export default function AdminTopRecruiters() {
-  const recruiters = [
-    { name: "John Recruiter", riders: 142, active: true },
-    { name: "Sarah Johnson", riders: 98, active: true },
-    { name: "Mike Williams", riders: 76, active: true },
-    { name: "David Brown", riders: 63, active: true },
-    { name: "Lisa Chen", riders: 45, active: false },
-  ];
+  const [recruiters, setRecruiters] = useState([]);
+
+  useEffect(() => {
+    apiClient.get("/admin/recruiters/top").then(res => {
+      setRecruiters(res.data);
+    });
+  }, []);
 
   return (
     <div className="card">
@@ -37,6 +40,12 @@ export default function AdminTopRecruiters() {
               </span>
             </div>
           ))}
+
+        {recruiters.length === 0 && (
+          <div className="text-center text-muted py-3">
+            No recruiter data available
+          </div>
+        )}
       </div>
     </div>
   );

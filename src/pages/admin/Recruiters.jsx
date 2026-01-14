@@ -1,63 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import apiClient from "../../services/apiClient";
 import RecruiterProfileModal from "../../components/admin/RecruiterProfileModal";
 import AddRecruiterModal from "../../components/admin/AddRecruiterModal";
 
 export default function AdminRecruiters() {
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [showAddRecruiter, setShowAddRecruiter] = useState(false);
+  const [recruiters, setRecruiters] = useState([]);
 
-  const recruiters = [
-    {
-      name: "John Recruiter",
-      code: "REC-2025-001",
-      riders: 142,
-      target: 150,
-      approval: 78,
-      pending: 1,
-      joined: "Jan 15, 2024",
-      active: true,
-    },
-    {
-      name: "Sarah Johnson",
-      code: "REC-2025-002",
-      riders: 98,
-      target: 120,
-      approval: 82,
-      pending: 2,
-      joined: "Mar 10, 2024",
-      active: true,
-    },
-    {
-      name: "Mike Williams",
-      code: "REC-2025-003",
-      riders: 76,
-      target: 100,
-      approval: 65,
-      pending: 0,
-      joined: "Feb 22, 2024",
-      active: true,
-    },
-    {
-      name: "Lisa Chen",
-      code: "REC-2025-004",
-      riders: 45,
-      target: 80,
-      approval: 72,
-      pending: 0,
-      joined: "Apr 5, 2024",
-      active: false,
-    },
-    {
-      name: "David Brown",
-      code: "REC-2025-005",
-      riders: 63,
-      target: 90,
-      approval: 88,
-      pending: 1,
-      joined: "May 18, 2024",
-      active: true,
-    },
-  ];
+  useEffect(() => {
+    apiClient.get("/admin/recruiters").then(res => {
+      const mapped = res.data.map(r => ({
+        id: r.id,
+        name: r.name,
+        code: r.recruiterCode,
+        riders: r.totalRiders,
+        target: 100,
+        approval: 0,
+        pending: 0,
+        joined: new Date(r.joinedAt).toLocaleDateString(),
+        active: r.status === "Active"
+      }));
+
+      setRecruiters(mapped);
+    });
+  }, []);
+
+  const openRecruiterProfile = async recruiter => {
+    const res = await apiClient.get(`/admin/recruiters/${recruiter.id}`);
+
+    setSelectedRecruiter({
+      ...recruiter,
+      email: res.data.email,
+      phone: res.data.phoneNumber,
+      location: "South Africa",
+      bio: "Recruiter profile",
+      lastActive: res.data.lastActive
+    });
+  };
 
   return (
     <div className="card">
@@ -138,17 +118,7 @@ export default function AdminRecruiters() {
 
                       <button
                         className="btn btn-sm btn-outline-primary"
-                        onClick={() =>
-                          setSelectedRecruiter({
-                            ...r,
-                            email: "john.recruiter@valtenative.com",
-                            phone: "+27 11 123 4567",
-                            location: "Johannesburg, South Africa",
-                            bio:
-                              "Experienced rider recruiter with 3+ years in the transportation industry. Specializing in Gauteng region recruitment.",
-                            lastActive: "Today, 09:42 AM",
-                          })
-                        }
+                        onClick={() => openRecruiterProfile(r)}
                       >
                         <i className="bi bi-eye"></i>
                       </button>
@@ -158,6 +128,12 @@ export default function AdminRecruiters() {
               </div>
             );
           })}
+
+          {recruiters.length === 0 && (
+            <div className="text-center text-muted py-4">
+              No recruiters found
+            </div>
+          )}
         </div>
       </div>
 

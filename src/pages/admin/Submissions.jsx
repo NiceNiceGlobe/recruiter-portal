@@ -1,61 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import apiClient from "../../services/apiClient";
 import ReviewSubmissionModal from "../../components/admin/ReviewSubmissionModal";
 
 export default function AdminSubmissions() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
 
-  const submissions = [
-    {
-      id: "SUB-004",
-      recruiter: "Sarah Johnson",
-      file: "joburg_riders.csv",
-      riders: 22,
-      status: "Pending",
-      uploadDate: "Dec 2, 2024",
-      reviewer: "-",
-      reviewDate: "-",
-    },
-    {
-      id: "SUB-002",
-      recruiter: "John Recruiter",
-      file: "december_riders.xlsx",
-      riders: 18,
-      status: "Pending",
-      uploadDate: "Dec 1, 2024",
-      reviewer: "-",
-      reviewDate: "-",
-    },
-    {
-      id: "SUB-005",
-      recruiter: "Mike Williams",
-      file: "pretoria_riders.xlsx",
-      riders: 15,
-      status: "Rejected",
-      uploadDate: "Nov 30, 2024",
-      reviewer: "Admin User",
-      reviewDate: "Dec 1, 2024",
-    },
-    {
-      id: "SUB-001",
-      recruiter: "John Recruiter",
-      file: "riders_nov.csv",
-      riders: 25,
-      status: "Approved",
-      uploadDate: "Nov 28, 2024",
-      reviewer: "Admin User",
-      reviewDate: "Nov 30, 2024",
-    },
-    {
-      id: "SUB-003",
-      recruiter: "John Recruiter",
-      file: "gauteng_riders.csv",
-      riders: 32,
-      status: "Approved",
-      uploadDate: "Oct 15, 2024",
-      reviewer: "Admin User",
-      reviewDate: "Oct 17, 2024",
-    },
-  ];
+  useEffect(() => {
+    apiClient.get("/admin/submissions").then(res => {
+      const mapped = res.data.map(s => ({
+        id: s.id,
+        recruiter: s.recruiterCode,
+        file: s.fileName,
+        riders: s.totalRiders,
+        status: s.status,
+        uploadDate: new Date(s.uploadedAt).toLocaleDateString(),
+        reviewer: s.status === "Pending" ? "-" : "Admin",
+        reviewDate: s.reviewedAt
+          ? new Date(s.reviewedAt).toLocaleDateString()
+          : "-"
+      }));
+
+      setSubmissions(mapped);
+    });
+  }, []);
 
   return (
     <>
@@ -120,6 +88,14 @@ export default function AdminSubmissions() {
                     </td>
                   </tr>
                 ))}
+
+                {submissions.length === 0 && (
+                  <tr>
+                    <td colSpan="9" className="text-center text-muted py-3">
+                      No submissions found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
