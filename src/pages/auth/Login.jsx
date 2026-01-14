@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../services/apiClient";
+import { useAuth } from "../../context/RecruiterContext";
 import "./Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,18 +19,22 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await apiClient.post("/account/login", {
-        email,
-        password,
-        rememberMe: true,
-      });
+      const response = await apiClient.post(
+        "/account/login",
+        {
+          email,
+          password,
+          rememberMe: true,
+        },
+        { withCredentials: true }
+      );
 
       const { id, email: userEmail, roles } = response.data;
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ id, email: userEmail, roles })
-      );
+      const userData = { id, email: userEmail, roles };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
 
       if (roles.includes("Recruiter")) {
         navigate("/dashboard");
@@ -37,7 +43,7 @@ export default function Login() {
       } else {
         navigate("/");
       }
-    } catch (err) {
+    } catch {
       setError("Invalid email or password.");
     } finally {
       setLoading(false);

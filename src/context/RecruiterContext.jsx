@@ -18,14 +18,12 @@ export function RecruiterProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
     apiClient
-      .get("/recruiter/me")
-      .then(res => setUser(res.data))
+      .get("/recruiter/me", { withCredentials: true })
+      .then(res => {
+        setUser(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data));
+      })
       .catch(() => {
         localStorage.removeItem("user");
         setUser(null);
@@ -40,7 +38,7 @@ export function RecruiterProvider({ children }) {
   };
 
   return (
-    <RecruiterContext.Provider value={{ user, loading, clearUser }}>
+    <RecruiterContext.Provider value={{ user, loading, setUser, clearUser }}>
       {!loading && children}
     </RecruiterContext.Provider>
   );
