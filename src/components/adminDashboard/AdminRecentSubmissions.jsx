@@ -18,44 +18,63 @@ export default function AdminRecentSubmissions() {
       </div>
 
       <div className="card-body">
-        <table className="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Submission ID</th>
-              <th>Recruiter</th>
-              <th>File</th>
-              <th>Riders</th>
-              <th>Status</th>
-              <th>Upload Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissions.slice(0, 5).map(s => (
-              <tr key={s.id}>
-                <td>{s.id.slice(0, 8).toUpperCase()}</td>
-                <td>{s.recruiterName}</td>
-                <td>{s.fileName}</td>
-                <td>{s.totalRiders}</td>
-                <td>
-                  <span className={`status-pill ${s.status.toLowerCase()}`}>
-                    {s.status}
-                  </span>
-                </td>
-                <td>
-                  {new Date(s.uploadedAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-
-            {submissions.length === 0 && (
+        <div className="table-responsive">
+          <table className="table table-hover align-middle">
+            <thead>
               <tr>
-                <td colSpan="6" className="text-center text-muted">
-                  No submissions found
-                </td>
+                <th>Submission ID</th>
+                <th>Recruiter</th>
+                <th>File</th>
+                <th>Riders</th>
+                <th>Status</th>
+                <th>Upload Date</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {submissions.slice(0, 5).map(s => (
+                <tr key={s.id}>
+                  <td className="text-nowrap">
+                    {s.id.slice(0, 8).toUpperCase()}
+                  </td>
+
+                  <td className="text-nowrap">
+                    {s.recruiterName}
+                  </td>
+
+                  <td
+                    className="text-truncate"
+                    style={{ maxWidth: 200 }}
+                    title={s.fileName}
+                  >
+                    {s.fileName}
+                  </td>
+
+                  <td className="text-nowrap">
+                    {s.totalRiders}
+                  </td>
+
+                  <td className="text-nowrap">
+                    <span className={`status-pill ${s.status.toLowerCase()}`}>
+                      {s.status}
+                    </span>
+                  </td>
+
+                  <td className="text-nowrap">
+                    {new Date(s.uploadedAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+
+              {submissions.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center text-muted">
+                    No submissions found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
