@@ -13,6 +13,7 @@ export default function UploadRiders() {
 
   const [submissionId, setSubmissionId] = useState(null);
   const [submissions, setSubmissions] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -61,6 +62,10 @@ export default function UploadRiders() {
   };
 
   const handleConfirmUpload = async () => {
+    if (!selectedFile || !submissionId) return;
+
+    setIsUploading(true);
+
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -70,15 +75,17 @@ export default function UploadRiders() {
       { headers: { "Content-Type": "multipart/form-data" } }
     );
 
+    setIsUploading(false);
     setSelectedFile(null);
     setShowPreview(false);
     setProgress(0);
     setSubmissionId(null);
 
-    loadHistory();
+    await loadHistory();
   };
 
   const handleCancel = () => {
+    if (isUploading) return;
     setSelectedFile(null);
     setShowPreview(false);
     setProgress(0);
@@ -178,13 +185,24 @@ export default function UploadRiders() {
                         <button
                           className="btn btn-success"
                           onClick={handleConfirmUpload}
+                          disabled={isUploading}
                         >
-                          <i className="bi bi-check-circle me-2"></i>
-                          Confirm Upload
+                          {isUploading ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-2"></span>
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <i className="bi bi-check-circle me-2"></i>
+                              Confirm Upload
+                            </>
+                          )}
                         </button>
                         <button
                           className="btn btn-outline-secondary ms-2"
                           onClick={handleCancel}
+                          disabled={isUploading}
                         >
                           Cancel
                         </button>

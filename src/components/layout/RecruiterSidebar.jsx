@@ -14,22 +14,28 @@ export default function RecruiterSidebar() {
   const status = user?.status || "Active";
 
   useEffect(() => {
+    if (!user) return;
+
     loadSubmissionCount();
     loadRiderCount();
-  }, []);
+  }, [user]);
 
   const loadSubmissionCount = async () => {
     try {
       const res = await apiClient.get("/recruiter/my-submissions");
       setSubmissionCount(res.data.length);
-    } catch {}
+    } catch {
+      setSubmissionCount(0);
+    }
   };
 
   const loadRiderCount = async () => {
     try {
       const res = await apiClient.get("/recruiter/my-riders/count");
       setRiderCount(res.data.count);
-    } catch {}
+    } catch {
+      setRiderCount(0);
+    }
   };
 
   return (
