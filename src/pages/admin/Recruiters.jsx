@@ -8,22 +8,26 @@ export default function AdminRecruiters() {
   const [showAddRecruiter, setShowAddRecruiter] = useState(false);
   const [recruiters, setRecruiters] = useState([]);
 
-  useEffect(() => {
-    apiClient.get("/admin/recruiters").then(res => {
-      const mapped = res.data.map(r => ({
-        id: r.id,
-        name: r.name,
-        code: r.recruiterCode,
-        riders: r.totalRiders,
-        target: 100,
-        approval: 0,
-        pending: 0,
-        joined: new Date(r.joinedAt).toLocaleDateString(),
-        active: r.status === "Active"
-      }));
+  const loadRecruiters = async () => {
+    const res = await apiClient.get("/admin/recruiters");
 
-      setRecruiters(mapped);
-    });
+    const mapped = res.data.map(r => ({
+      id: r.id,
+      name: r.name,
+      code: r.recruiterCode,
+      riders: r.totalRiders,
+      target: 100,
+      approval: 0,
+      pending: 0,
+      joined: new Date(r.joinedAt).toLocaleDateString(),
+      active: r.status === "Active"
+    }));
+
+    setRecruiters(mapped);
+  };
+
+  useEffect(() => {
+    loadRecruiters();
   }, []);
 
   const openRecruiterProfile = async recruiter => {
@@ -147,7 +151,10 @@ export default function AdminRecruiters() {
       {showAddRecruiter && (
         <AddRecruiterModal
           onClose={() => setShowAddRecruiter(false)}
-          onSubmit={() => setShowAddRecruiter(false)}
+          onSubmit={() => {
+            setShowAddRecruiter(false);
+            loadRecruiters();
+          }}
         />
       )}
     </div>
