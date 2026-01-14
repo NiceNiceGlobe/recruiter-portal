@@ -9,8 +9,11 @@ export default function AdminSidebar() {
     riders: 0,
   });
 
+  const [admin, setAdmin] = useState(null);
+
   useEffect(() => {
     loadCounts();
+    loadAdmin();
   }, []);
 
   const loadCounts = async () => {
@@ -22,6 +25,15 @@ export default function AdminSidebar() {
     }
   };
 
+  const loadAdmin = async () => {
+    try {
+      const res = await apiClient.get("/admin/me");
+      setAdmin(res.data);
+    } catch (err) {
+      console.error("Failed to load admin profile", err);
+    }
+  };
+
   return (
     <div className="sidebar admin-sidebar" id="adminSidebar">
       <div className="sidebar-header text-center">
@@ -29,13 +41,19 @@ export default function AdminSidebar() {
           <i className="bi bi-shield-check text-dark"></i>
         </div>
 
-        <h5 className="mb-1">Admin User</h5>
-        <p className="text-white-50 mb-0">Valtenative Administrator</p>
+        {admin && (
+          <>
+            <h5 className="mb-1">{admin.fullName}</h5>
+            <p className="text-white-50 mb-0">{admin.email}</p>
 
-        <div className="mt-3">
-          <span className="badge bg-info">Administrator</span>
-          <small className="d-block mt-1">ID: ADMIN-001</small>
-        </div>
+            <div className="mt-3">
+              <span className="badge bg-info">{admin.role}</span>
+              <small className="d-block mt-1">
+                ID: {admin.id.slice(0, 8).toUpperCase()}
+              </small>
+            </div>
+          </>
+        )}
       </div>
 
       <ul className="sidebar-menu mt-4">

@@ -33,7 +33,7 @@ export default function AdminRecentSubmissions() {
             {submissions.slice(0, 5).map(s => (
               <tr key={s.id}>
                 <td>{s.id.slice(0, 8).toUpperCase()}</td>
-                <td>{s.recruiterCode}</td>
+                <td>{s.recruiterName}</td>
                 <td>{s.fileName}</td>
                 <td>{s.totalRiders}</td>
                 <td>

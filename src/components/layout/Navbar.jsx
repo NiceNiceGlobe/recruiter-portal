@@ -9,8 +9,8 @@ export default function Navbar({ onToggleSidebar }) {
 
   const [notifications, setNotifications] = useState([]);
 
-  const userName = user?.name || "Recruiter";
-  const userRole = user?.role || "Recruiter";
+  const userName = user?.name || user?.fullName || "User";
+  const userRole = user?.role;
 
   const loadNotifications = async () => {
     if (!user) return;
@@ -19,9 +19,7 @@ export default function Navbar({ onToggleSidebar }) {
       if (userRole === "Recruiter") {
         const res = await apiClient.get("/recruiter/dashboard");
         setNotifications(res.data.recentActivity || []);
-      }
-
-      if (userRole === "Admin") {
+      } else {
         const res = await apiClient.get("/admin/notifications");
         setNotifications(res.data.recentActivity || []);
       }
@@ -34,24 +32,13 @@ export default function Navbar({ onToggleSidebar }) {
   useEffect(() => {
     loadNotifications();
 
-    const handleStorageChange = (e) => {
-      if (e.key === "refreshNotifications") {
-        loadNotifications();
-      }
-    };
-
-    const handleFocus = () => {
-      loadNotifications();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
+    const handleFocus = () => loadNotifications();
     window.addEventListener("focus", handleFocus);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("focus", handleFocus);
     };
-  }, [user, userRole]);
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -129,7 +116,9 @@ export default function Navbar({ onToggleSidebar }) {
             >
               <div className="me-2 text-start">
                 <strong>{userName}</strong>
-                <small className="d-block text-muted">{userRole}</small>
+                <small className="d-block text-muted">
+                  {userRole || "Administrator"}
+                </small>
               </div>
               <i className="bi bi-person-circle fs-4"></i>
             </button>
@@ -137,15 +126,6 @@ export default function Navbar({ onToggleSidebar }) {
             <ul className="dropdown-menu dropdown-menu-end">
               <li>
                 <h6 className="dropdown-header">{userName}</h6>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  <i className="bi bi-person me-2"></i>
-                  My Profile
-                </a>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
               </li>
               <li>
                 <button

@@ -12,6 +12,8 @@ import AdminDashboard from "../pages/admin/Dashboard";
 import AdminSubmissions from "../pages/admin/Submissions";
 import AdminRecruiters from "../pages/admin/Recruiters";
 import AdminRiders from "../pages/admin/Riders";
+import AdminReports from "../pages/admin/Reports";
+import AdminSettings from "../pages/admin/Settings";
 import Login from "../pages/auth/Login";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -54,6 +56,8 @@ export default function AppRoutes() {
         <Route path="/admin/submissions" element={<AdminSubmissions />} />
         <Route path="/admin/recruiters" element={<AdminRecruiters />} />
         <Route path="/admin/riders" element={<AdminRiders />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
       </Route>
 
       {/* RECRUITER ROUTES */}

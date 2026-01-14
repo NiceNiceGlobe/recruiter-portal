@@ -10,7 +10,7 @@ export default function AdminSubmissions() {
     apiClient.get("/admin/submissions").then(res => {
       const mapped = res.data.map(s => ({
         id: s.id,
-        recruiter: s.recruiterCode,
+        recruiter: s.recruiterName,
         file: s.fileName,
         riders: s.totalRiders,
         status: s.status,
