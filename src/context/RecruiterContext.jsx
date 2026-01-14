@@ -18,17 +18,30 @@ export function RecruiterProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiClient
-      .get("/recruiter/me", { withCredentials: true })
-      .then(res => {
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-      })
-      .catch(() => {
-        localStorage.removeItem("user");
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
+    const storedUser = getStoredUser();
+
+    if (!storedUser) {
+      setLoading(false);
+      return;
+    }
+
+    if (storedUser.roles?.includes("Recruiter")) {
+      apiClient
+        .get("/recruiter/me", { withCredentials: true })
+        .then(res => {
+          const mergedUser = { ...storedUser, ...res.data };
+          setUser(mergedUser);
+          localStorage.setItem("user", JSON.stringify(mergedUser));
+        })
+        .catch(() => {
+          localStorage.removeItem("user");
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setUser(storedUser);
+      setLoading(false);
+    }
   }, []);
 
   const clearUser = () => {

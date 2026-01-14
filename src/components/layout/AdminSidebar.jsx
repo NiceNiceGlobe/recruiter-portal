@@ -1,12 +1,8 @@
-export default function AdminSidebar({
-  visible = false,
-  onSwitchToRecruiter,
-}) {
+export default function AdminSidebar() {
   return (
     <div
       className="sidebar admin-sidebar"
       id="adminSidebar"
-      style={{ display: visible ? "block" : "none" }}
     >
       <div className="sidebar-header text-center">
         <div className="recruiter-avatar bg-warning">
@@ -65,19 +61,6 @@ export default function AdminSidebar({
           <a href="#">
             <i className="bi bi-gear"></i>
             System Settings
-          </a>
-        </li>
-
-        <li className="mt-4">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onSwitchToRecruiter();
-            }}
-          >
-            <i className="bi bi-arrow-left-circle"></i>
-            Recruiter View
           </a>
         </li>
       </ul>

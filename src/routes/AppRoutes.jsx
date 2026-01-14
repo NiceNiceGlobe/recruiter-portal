@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "../context/RecruiterContext";
 import MainLayout from "../components/layout/MainLayout";
 import Dashboard from "../pages/recruiter/Dashboard";
 import UploadRiders from "../pages/recruiter/UploadRiders";
@@ -11,7 +12,10 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import SubmissionDetails from "../pages/recruiter/SubmissionDetails";
 
 export default function AppRoutes() {
-  const isLoggedIn = !!localStorage.getItem("user");
+  const { user, loading } = useAuth();
+  const isLoggedIn = !!user;
+
+  if (loading) return null;
 
   return (
     <Routes>

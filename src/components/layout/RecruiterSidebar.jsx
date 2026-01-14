@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/RecruiterContext";
 import apiClient from "../../services/apiClient";
 
-export default function RecruiterSidebar({ onSwitchToAdmin }) {
+export default function RecruiterSidebar() {
   const { user } = useAuth();
   const [submissionCount, setSubmissionCount] = useState(0);
   const [riderCount, setRiderCount] = useState(0);
@@ -22,18 +22,14 @@ export default function RecruiterSidebar({ onSwitchToAdmin }) {
     try {
       const res = await apiClient.get("/recruiter/my-submissions");
       setSubmissionCount(res.data.length);
-    } catch (err) {
-      console.error("Failed to load submission count", err);
-    }
+    } catch {}
   };
 
   const loadRiderCount = async () => {
     try {
       const res = await apiClient.get("/recruiter/my-riders/count");
       setRiderCount(res.data.count);
-    } catch (err) {
-      console.error("Failed to load rider count", err);
-    }
+    } catch {}
   };
 
   return (
@@ -54,7 +50,7 @@ export default function RecruiterSidebar({ onSwitchToAdmin }) {
 
       <ul className="sidebar-menu mt-4">
         <li>
-          <NavLink to="/" end>
+          <NavLink to="/dashboard" end>
             <i className="bi bi-speedometer2"></i>
             Dashboard
           </NavLink>
@@ -99,19 +95,6 @@ export default function RecruiterSidebar({ onSwitchToAdmin }) {
             <i className="bi bi-person"></i>
             My Profile
           </NavLink>
-        </li>
-
-        <li className="mt-4">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onSwitchToAdmin();
-            }}
-          >
-            <i className="bi bi-shield-check"></i>
-            Admin View
-          </a>
         </li>
       </ul>
 

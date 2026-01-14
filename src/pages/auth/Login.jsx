@@ -36,12 +36,12 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
 
-      if (roles.includes("Recruiter")) {
+      if (roles.includes("Recruiter") || roles.includes("Admin")) {
         navigate("/dashboard");
-      } else if (roles.includes("Admin")) {
-        navigate("/admin/dashboard");
       } else {
-        navigate("/");
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/login");
       }
     } catch {
       setError("Invalid email or password.");
