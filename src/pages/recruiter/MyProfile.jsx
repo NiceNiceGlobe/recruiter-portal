@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../services/apiClient";
+import ChangePasswordModal from "../../components/profile/ChangePasswordModal";
 
 export default function MyProfile() {
   const [profile, setProfile] = useState(null);
@@ -12,6 +13,8 @@ export default function MyProfile() {
     weeklyPerformanceReport: true,
     systemUpdates: true
   });
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   useEffect(() => {
     apiClient.get("/recruiter/me").then(res => {
@@ -81,7 +84,10 @@ export default function MyProfile() {
                 Edit Profile
               </button>
 
-              <button className="btn btn-outline-secondary w-100">
+              <button
+                className="btn btn-outline-secondary w-100"
+                onClick={() => setShowPasswordModal(true)}
+              >
                 <i className="bi bi-key me-2"></i>
                 Change Password
               </button>
@@ -222,8 +228,13 @@ export default function MyProfile() {
             </div>
           </div>
         </div>
-
       </div>
+
+      {showPasswordModal && (
+        <ChangePasswordModal
+          onClose={() => setShowPasswordModal(false)}
+        />
+      )}
     </div>
   );
 }
