@@ -36,7 +36,9 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
 
-      if (roles.includes("Recruiter") || roles.includes("Admin")) {
+      if (roles.includes("Admin")) {
+        navigate("/admin/dashboard");
+      } else if (roles.includes("Recruiter")) {
         navigate("/dashboard");
       } else {
         localStorage.removeItem("user");

@@ -336,3 +336,84 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.status-pill.active {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.status-pill.inactive {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.status-pill.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-pill.approved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.recruiter-card {
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.active {
+  background-color: #22c55e;
+}
+
+.status-dot.inactive {
+  background-color: #ef4444;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 3000;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+
+  overflow-y: auto;
+}
+
+.modal-overlay .modal-dialog {
+  margin: 0;
+  max-height: 90vh;
+  width: 100%;
+}
+
+.modal-overlay .modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+}
